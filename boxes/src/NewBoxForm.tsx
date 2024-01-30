@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { v4 as uuid } from 'uuid';
+import { IBoxFormData, IBoxInitialFormData, INewBoxFormProps } from "./interfaces";
 
 /** Form for adding box.
  *
@@ -12,13 +13,13 @@ import { v4 as uuid } from 'uuid';
  * BoxList -> NewBoxForm
  */
 
-const INITIAL_DATA = {height: "100", width: "100", backgroundColor: ""};
+const INITIAL_DATA = { height: "100", width: "100", backgroundColor: "" };
 
-function NewBoxForm({ createBox }) {
-  const [formData, setFormData] = useState(INITIAL_DATA);
+function NewBoxForm({ createBox }: INewBoxFormProps) {
+  const [formData, setFormData] = useState<IBoxInitialFormData>(INITIAL_DATA);
 
   /** Update form input. */
-  function handleChange(evt) {
+  function handleChange(evt: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = evt.target;
     setFormData(formData => ({
       ...formData,
@@ -27,47 +28,53 @@ function NewBoxForm({ createBox }) {
   }
 
   /** Submit form: call function from parent & clear inputs. */
-  function handleSubmit(evt) {
+  function handleSubmit(evt: React.FormEvent) {
     evt.preventDefault();
-    createBox({ ...formData, id: uuid() });
+    const { height, width, backgroundColor } = formData;
+    createBox({
+      height: Number(height),
+      width: Number(width),
+      backgroundColor,
+      id: uuid()
+    });
     setFormData(INITIAL_DATA);
   }
 
   return (
-      <div className="NewBoxForm">
-        <form onSubmit={handleSubmit}>
-          <div>
-            <label htmlFor="newBox-height">Height</label>
-            <input
-                id="newBox-height"
-                onChange={handleChange}
-                name="height"
-                value={formData.height}
-                type="number"
-            />
-          </div>
-          <div>
-            <label htmlFor="newBox-width">Width</label>
-            <input
-                id="newBox-width"
-                onChange={handleChange}
-                name="width"
-                value={formData.width}
-                type="number"
-            />
-          </div>
-          <div>
-            <label htmlFor="newBox-backgroundColor">Background Color</label>
-            <input
-                id="newBox-backgroundColor"
-                onChange={handleChange}
-                name="backgroundColor"
-                value={formData.backgroundColor}
-            />
-          </div>
-          <button className="NewBoxForm-addBtn">Add a new box!</button>
-        </form>
-      </div>
+    <div className="NewBoxForm">
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label htmlFor="newBox-height">Height</label>
+          <input
+            id="newBox-height"
+            onChange={handleChange}
+            name="height"
+            value={formData.height}
+            type="number"
+          />
+        </div>
+        <div>
+          <label htmlFor="newBox-width">Width</label>
+          <input
+            id="newBox-width"
+            onChange={handleChange}
+            name="width"
+            value={formData.width}
+            type="number"
+          />
+        </div>
+        <div>
+          <label htmlFor="newBox-backgroundColor">Background Color</label>
+          <input
+            id="newBox-backgroundColor"
+            onChange={handleChange}
+            name="backgroundColor"
+            value={formData.backgroundColor}
+          />
+        </div>
+        <button className="NewBoxForm-addBtn">Add a new box!</button>
+      </form>
+    </div>
   );
 }
 
